@@ -1,0 +1,36 @@
+name: Build Flutter APK
+
+# زمانی که push روی شاخه main انجام شود اجرا شود
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      # دریافت سورس کد
+      - uses: actions/checkout@v3
+
+      # نصب Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.6'
+
+      # نصب وابستگی‌ها
+      - name: Install dependencies
+        run: flutter pub get
+
+      # ساخت APK release
+      - name: Build APK
+        run: flutter build apk --release
+
+      # آپلود APK به عنوان artifact
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: build/app/outputs/flutter-apk/app-release.apk
